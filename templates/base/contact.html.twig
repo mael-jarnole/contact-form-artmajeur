@@ -1,0 +1,19 @@
+{% extends "base.html.twig" %}
+{% block title %}Nous contacter{% endblock %}
+{% block main %}
+    <h2>Nous contacter</h2>
+    {{ form_start(form, { 'attr': { 'data-controller': 'contact', 'class': 'row g-3'} }) }}
+    <div class="col-md-6">
+        {{ form_row(form.username) }}
+    </div>
+    <div class="col-md-6">
+        {{ form_row(form.email) }}
+    </div>
+    <div class="col-12">
+        {{ form_row(form.content) }}
+    </div>
+    <div class="col-12 d-flex justify-content-end">
+        {{ form_row(form.submitMessage, { 'attr': { 'class': 'btn btn-dark'}}) }}
+    </div>
+    {{ form_end(form) }}
+{% endblock %}

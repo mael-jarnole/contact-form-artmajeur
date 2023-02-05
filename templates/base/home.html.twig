@@ -1,0 +1,9 @@
+{% extends "base.html.twig" %}
+{% block title %}Accueil - Art majeur{% endblock %}
+{% block main %}
+    {% if message != null %}
+        <div class="alert alert-dark" role="alert">
+            Merci pour votre message {{ message.username }} ! Nous traiterons votre demande au plus vite.
+        </div>
+    {% endif %}
+{% endblock %}
