@@ -4,19 +4,16 @@ namespace App\Service;
 
 use App\Entity\Message;
 use App\Repository\MessageRepository;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
 class ContactMessageService
 {
     private const DATA_MESSAGES_DIRECTORY = '../data/messages';
     private MessageRepository $messageRepository;
-    private LoggerInterface $logger;
 
-    public function __construct(MessageRepository $messageRepository, LoggerInterface $logger)
+    public function __construct(MessageRepository $messageRepository)
     {
         $this->messageRepository = $messageRepository;
-        $this->logger = $logger;
     }
 
     /**
@@ -26,7 +23,6 @@ class ContactMessageService
     public function createMessage(Message $contactMessage): void
     {
         $this->messageRepository->save($contactMessage, true);
-        $this->logger->alert(sizeof($this->messageRepository->findAll()));
         $this->writeToJsonFile($contactMessage);
     }
 
