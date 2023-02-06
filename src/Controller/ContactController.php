@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Message;
 use App\Form\Type\MessageType;
-use App\Repository\MessageRepository;
+use App\Service\ContactMessageService;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,7 +13,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ContactController extends AbstractController
 {
-
     /**
      * @param Request $request
      * @return Response
@@ -21,30 +20,32 @@ class ContactController extends AbstractController
     #[Route('/', name: 'homepage')]
     public function homePage(Request $request): Response
     {
+        // check if a message has been stored in session
+        // because it was previously sent by user
         $message = $request->getSession()->get('message');
-        if (!$message instanceof Message) {
-            return $this->render('base/home.html.twig', [
-                "message" => null
-            ]);
-        } else {
+
+        // if it was set, delete it. we are about to handle it
+        if (isset($message)) {
             $request->getSession()->set('message', null);
-            return $this->render('base/home.html.twig', [
-                "message" => $message
-            ]);
         }
+
+        // Renders the homepage with an alert with the message if there was one
+        return $this->render('base/home.html.twig', [
+            "message" => $message instanceof Message ? $message : null
+        ]);
 
     }
 
     /**
-     * @param MessageRepository $messageRepository
+     * @param ContactMessageService $contactMessageService
      * @param Request $request
      * @return Response
      * @throws Exception
      */
     #[Route('/contact', name: 'contact')]
     public function contactPage(
-        MessageRepository $messageRepository,
-        Request           $request
+        ContactMessageService $contactMessageService,
+        Request               $request
     ): Response
     {
         $form = $this->createForm(MessageType::class, null, [
@@ -57,8 +58,11 @@ class ContactController extends AbstractController
             $contactMessage = $form->getData();
 
             if ($contactMessage instanceof Message) {
-                $messageRepository->save($contactMessage);
+                // store in session
                 $request->getSession()->set('message', $contactMessage);
+                // handle message
+                $contactMessageService->createMessage($contactMessage);
+                // redirect to homepage
                 return $this->redirectToRoute('homepage');
             } else {
                 throw new Exception("The contact message is not a valid object");

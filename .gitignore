@@ -7,6 +7,11 @@
 /public/bundles/
 /var/
 /vendor/
+
+## Data folder contains the json message files ##
+/data/
+/data/messages/
+
 ###< symfony/framework-bundle ###
 
 ###> phpunit/phpunit ###

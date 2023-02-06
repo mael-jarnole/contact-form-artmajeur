@@ -5,9 +5,10 @@ namespace App\Entity;
 use App\Repository\MessageRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 
 #[ORM\Entity(repositoryClass: MessageRepository::class)]
-class Message
+class Message implements JsonSerializable
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -62,5 +63,15 @@ class Message
         $this->content = $content;
 
         return $this;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return array(
+            'id' => $this->id,
+            'username' => $this->username,
+            'email' => $this->email,
+            'content' => $this->content
+        );
     }
 }
